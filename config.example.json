@@ -1,0 +1,39 @@
+{
+  "server": {
+    "name": "Squeezebox Bootstrap",
+    "uuid": "11111111-2222-4333-8444-555555555555",
+    "host": "0.0.0.0",
+    "advertise_ip": "",
+    "http_port": 9000,
+    "slimproto_port": 3483,
+    "discovery_port": 3483,
+    "version": "7.999.999",
+    "debug_protocol": false,
+    "public_catalog_mode": false,
+    "max_tcp_connections": 64,
+    "max_tcp_connections_per_ip": 8,
+    "max_comet_streams": 32,
+    "max_comet_streams_per_ip": 2,
+    "max_comet_sessions": 128,
+    "max_players": 64,
+    "max_subscriptions_per_session": 8,
+    "max_pending_events": 32,
+    "session_idle_seconds": 300,
+    "discovery_requests_per_minute": 30,
+    "http_requests_per_minute": 60,
+    "slimproto_frames_per_minute": 240
+  },
+  "applets": [
+    {
+      "name": "StandaloneRadio",
+      "title": "Standalone Radio",
+      "version": "0.3.0",
+      "target": "baby",
+      "url": "http://49.12.198.91/sbstandalone/StandaloneRadio-0.3.0.zip",
+      "sha": "0123456789abcdef0123456789abcdef01234567",
+      "desc": "Standalone internet radio",
+      "creator": "Example",
+      "email": ""
+    }
+  ]
+}

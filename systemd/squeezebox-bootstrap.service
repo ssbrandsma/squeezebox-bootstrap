@@ -1,0 +1,22 @@
+[Unit]
+Description=Squeezebox Bootstrap Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=squeezebox-bootstrap
+Group=squeezebox-bootstrap
+WorkingDirectory=/opt/squeezebox-bootstrap
+ExecStart=/opt/squeezebox-bootstrap/.venv/bin/python -m squeezebox_bootstrap --config /etc/squeezebox-bootstrap/config.json
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/squeezebox-bootstrap
+
+[Install]
+WantedBy=multi-user.target
+

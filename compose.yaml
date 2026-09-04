@@ -1,0 +1,23 @@
+services:
+  squeezebox-bootstrap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    mem_limit: 128m
+    cpus: 0.50
+    ports:
+      - "3483:3483/tcp"
+      - "3483:3483/udp"
+      - "9000:9000/tcp"
+    volumes:
+      - type: bind
+        source: ./config.json
+        target: /config/config.json
+        read_only: true
