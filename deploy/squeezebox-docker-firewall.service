@@ -1,0 +1,13 @@
+[Unit]
+Description=Squeezebox Bootstrap Docker rate limits
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/squeezebox-docker-firewall apply
+ExecStop=/usr/local/sbin/squeezebox-docker-firewall remove
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

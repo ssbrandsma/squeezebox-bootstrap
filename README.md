@@ -227,6 +227,21 @@ Common checks:
 
 The server enforces bounded UDP datagrams, SlimProto frames, HTTP headers/bodies, read/idle timeouts, connection/session/player limits, and per-IP request limits. It does not accept arbitrary paths, arbitrary filesystem access, dynamic imports, subprocess commands, or ZIP uploads.
 
+### VPS Docker Rate Limits
+
+For the AlmaLinux Docker deployment, [`deploy/squeezebox-docker-firewall`](deploy/squeezebox-docker-firewall) installs host-level limits without affecting other hosted sites. The accompanying [`deploy/squeezebox-docker-firewall.service`](deploy/squeezebox-docker-firewall.service) applies the rules after Docker starts and persists them across reboots.
+
+The rules apply only to the Bootstrap service ports: UDP `3483` is limited to 30 packets per second per source IP (burst 60); TCP `3483` and `9000` are limited to 60 packets per second (burst 120), 20 new connections per minute (burst 30), and 16 concurrent connections per source IP. Established connections are allowed before the limits are evaluated. IPv4 rules use Docker's `DOCKER-USER` chain; IPv6 rules use a dedicated `INPUT` chain for Docker's IPv6 listener. Ports `80` and `443` are not matched or changed.
+
+Install or update the layer as root:
+
+```bash
+install -m 0755 deploy/squeezebox-docker-firewall /usr/local/sbin/squeezebox-docker-firewall
+install -m 0644 deploy/squeezebox-docker-firewall.service /etc/systemd/system/squeezebox-docker-firewall.service
+systemctl daemon-reload
+systemctl enable --now squeezebox-docker-firewall.service
+```
+
 For public deployment:
 
 - Run on a dedicated, patched Linux VPS rather than a home network.

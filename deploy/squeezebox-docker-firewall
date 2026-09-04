@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Rate-limit only traffic forwarded to the Squeezebox Bootstrap container.
+set -euo pipefail
+
+CHAIN4="SQUEEZEBOX_GUARD"
+CHAIN6="SQUEEZEBOX_GUARD6"
+
+apply_ipv4() {
+  iptables -N "$CHAIN4" 2>/dev/null || true
+  iptables -F "$CHAIN4"
+  iptables -C DOCKER-USER -j "$CHAIN4" 2>/dev/null || iptables -I DOCKER-USER 1 -j "$CHAIN4"
+
+  iptables -A "$CHAIN4" -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
+  iptables -A "$CHAIN4" -p udp --dport 3483 -m hashlimit --hashlimit-above 30/second --hashlimit-burst 60 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_udp -j DROP
+  iptables -A "$CHAIN4" -p tcp -m multiport --dports 3483,9000 -m hashlimit --hashlimit-above 60/second --hashlimit-burst 120 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_tcp_packets -j DROP
+  iptables -A "$CHAIN4" -p tcp --syn -m multiport --dports 3483,9000 -m hashlimit --hashlimit-above 20/minute --hashlimit-burst 30 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_tcp_new -j REJECT --reject-with tcp-reset
+  iptables -A "$CHAIN4" -p tcp --syn -m multiport --dports 3483,9000 -m connlimit --connlimit-above 16 --connlimit-mask 32 -j REJECT --reject-with tcp-reset
+  iptables -A "$CHAIN4" -j RETURN
+}
+
+apply_ipv6() {
+  ip6tables -N "$CHAIN6" 2>/dev/null || true
+  ip6tables -F "$CHAIN6"
+  ip6tables -C INPUT -j "$CHAIN6" 2>/dev/null || ip6tables -I INPUT 1 -j "$CHAIN6"
+
+  ip6tables -A "$CHAIN6" -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
+  ip6tables -A "$CHAIN6" -p udp --dport 3483 -m hashlimit --hashlimit-above 30/second --hashlimit-burst 60 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_udp6 -j DROP
+  ip6tables -A "$CHAIN6" -p tcp -m multiport --dports 3483,9000 -m hashlimit --hashlimit-above 60/second --hashlimit-burst 120 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_tcp_packets6 -j DROP
+  ip6tables -A "$CHAIN6" -p tcp --syn -m multiport --dports 3483,9000 -m hashlimit --hashlimit-above 20/minute --hashlimit-burst 30 --hashlimit-mode srcip,dstport --hashlimit-name squeezebox_tcp_new6 -j REJECT --reject-with tcp-reset
+  ip6tables -A "$CHAIN6" -p tcp --syn -m multiport --dports 3483,9000 -m connlimit --connlimit-above 16 --connlimit-mask 128 -j REJECT --reject-with tcp-reset
+  ip6tables -A "$CHAIN6" -j RETURN
+}
+
+remove_ipv4() {
+  iptables -D DOCKER-USER -j "$CHAIN4" 2>/dev/null || true
+  iptables -F "$CHAIN4" 2>/dev/null || true
+  iptables -X "$CHAIN4" 2>/dev/null || true
+}
+
+remove_ipv6() {
+  ip6tables -D INPUT -j "$CHAIN6" 2>/dev/null || true
+  ip6tables -F "$CHAIN6" 2>/dev/null || true
+  ip6tables -X "$CHAIN6" 2>/dev/null || true
+}
+
+case "${1:-apply}" in
+  apply)
+    apply_ipv4
+    apply_ipv6
+    ;;
+  remove)
+    remove_ipv4
+    remove_ipv6
+    ;;
+  *)
+    echo "Usage: $0 {apply|remove}" >&2
+    exit 2
+    ;;
+esac
