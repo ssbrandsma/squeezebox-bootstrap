@@ -24,15 +24,15 @@
     "slimproto_frames_per_minute": 240
   },
   "applets": [
-    {
+     {
       "name": "StandaloneRadio",
       "title": "Standalone Radio",
-      "version": "0.3.0",
+      "version": "0.4.1",
       "target": "baby",
-      "url": "http://49.12.198.91/sbstandalone/StandaloneRadio-0.3.0.zip",
-      "sha": "0123456789abcdef0123456789abcdef01234567",
+      "url": "http://49.12.198.91/sbstandalone/StandaloneRadio-0.4.1.zip",
+      "sha": "9940c7867c9941867ff6e151145c05f6b05724cb",
       "desc": "Standalone internet radio",
-      "creator": "Example",
+      "creator": "Sjoerd Brandsma",
       "email": ""
     }
   ]
