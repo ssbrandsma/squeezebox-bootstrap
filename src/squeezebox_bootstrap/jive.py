@@ -30,15 +30,27 @@ def _applet_matches(applet: AppletEntry, target: str | None, version: str | None
 def serverstatus(state: ServerState) -> dict[str, Any]:
     players_loop = [
         {
+            "playerindex": str(index),
             "playerid": player.player_id,
+            # SlimProto calls this device identifier the firmware UUID; Jive
+            # uses it to associate its current player with serverstatus.
+            "uuid": player.firmware,
             "name": player.name or player.player_id,
             "model": player.model,
-            "connected": 1,
+            "modelname": player.model_name or player.model,
+            # SqueezePlay only promotes entries marked as players to its
+            # current-player state, which starts its date subscription.
+            "isplayer": 1,
+            "connected": 1 if player.slimproto_connected else 0,
             "power": 1 if player.power else 0,
-            "firmware": player.revision,
+            "firmware": player.firmware_version or str(player.revision),
             "ip": player.remote_address,
+            "seq_no": 0,
+            "displaytype": "none",
+            "isplaying": 0,
+            "canpoweroff": 1,
         }
-        for player in state.players.values()
+        for index, player in enumerate(state.players.values())
     ]
     return {
         "httpport": str(state.config.http_port),
@@ -57,7 +69,7 @@ def playerstatus(state: ServerState, player_id: str) -> dict[str, Any]:
         return {"error": "invalid player"}
     return {
         "player_name": player.name or player.player_id,
-        "player_connected": 1,
+        "player_connected": 1 if player.slimproto_connected else 0,
         "player_ip": player.remote_address,
         "power": 1 if player.power else 0,
         "mode": "stop",

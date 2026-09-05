@@ -4,6 +4,7 @@ import time
 from dataclasses import replace
 from typing import Callable
 
+from .metrics import TrafficMetrics
 from .models import AppletEntry, CometSession, PlayerState, ServerConfig
 
 
@@ -13,6 +14,7 @@ class ServerState:
         self.applets = applets
         self.players: dict[str, PlayerState] = {}
         self.sessions: dict[str, CometSession] = {}
+        self.traffic_metrics = TrafficMetrics(config.max_metric_entries, config.metrics_retention_seconds)
         self._listeners: list[Callable[[], None]] = []
 
     def add_listener(self, listener: Callable[[], None]) -> None:
@@ -40,7 +42,6 @@ class ServerState:
         player.last_seen = time.time()
         if event:
             player.last_stat_event = event
-        self.notify_changed()
 
     def remove_player(self, player_id: str) -> None:
         if self.players.pop(player_id, None) is not None:

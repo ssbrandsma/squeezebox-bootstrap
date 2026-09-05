@@ -14,6 +14,7 @@ class AppletEntry:
     url: str
     sha: str
     desc: str = ""
+    changes: str = ""
     creator: str = ""
     email: str = ""
     min_target_version: str | None = None
@@ -28,6 +29,7 @@ class AppletEntry:
             "url": self.url,
             "sha": self.sha.lower(),
             "desc": self.desc,
+            "changes": self.changes,
             "creator": self.creator,
             "email": self.email,
         }
@@ -48,7 +50,7 @@ class ServerConfig:
     max_tcp_connections: int = 64
     max_tcp_connections_per_ip: int = 8
     max_comet_streams: int = 32
-    max_comet_streams_per_ip: int = 2
+    max_comet_streams_per_ip: int = 8
     max_comet_sessions: int = 128
     max_players: int = 64
     max_subscriptions_per_session: int = 8
@@ -57,6 +59,9 @@ class ServerConfig:
     discovery_requests_per_minute: int = 30
     http_requests_per_minute: int = 60
     slimproto_frames_per_minute: int = 240
+    max_metric_entries: int = 4096
+    metrics_retention_seconds: int = 86400
+    metrics_log_interval_seconds: int = 300
 
 
 @dataclass(slots=True)
@@ -65,10 +70,13 @@ class PlayerState:
     remote_address: str
     model: str = "unknown"
     firmware: str = ""
+    firmware_version: str = ""
     revision: int = 0
+    model_name: str = ""
     capabilities: str = ""
     language: str = ""
     bytes_received: int = 0
+    slimproto_connected: bool = False
     connected_at: float = 0.0
     last_seen: float = 0.0
     power: bool = True
@@ -82,11 +90,14 @@ class Subscription:
     command: str
     player_id: str | None
     args: list[str]
+    refresh_interval_seconds: int | None = None
+    next_refresh_at: float = 0.0
 
 
 @dataclass(slots=True)
 class CometSession:
     client_id: str
+    player_id: str = "unknown"
     subscriptions: dict[str, Subscription] = field(default_factory=dict)
     pending_events: list[dict[str, Any]] = field(default_factory=list)
     is_streaming: bool = False

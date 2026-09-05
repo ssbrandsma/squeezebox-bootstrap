@@ -87,15 +87,24 @@ def parse_helo(payload: bytes, remote_address: str) -> PlayerState:
         uuid_hex = ""
         wlan_flags, bytes_hi, bytes_lo, language = struct.unpack(">HII2s", payload[8:20])
         capabilities = payload[20:].decode("utf-8", errors="ignore")
+    capability_values = {}
+    for capability in capabilities.split(","):
+        key, separator, value = capability.partition("=")
+        if separator:
+            capability_values[key.lower()] = value
+    model = capability_values.get("model", f"device-{device_id}")
     return PlayerState(
         player_id=player_id,
         remote_address=remote_address,
-        model=f"device-{device_id}",
+        model=model,
+        model_name=capability_values.get("modelname", model),
         firmware=uuid_hex,
+        firmware_version=capability_values.get("firmware", ""),
         revision=revision,
         capabilities=capabilities,
         language=language.decode("ascii", errors="ignore"),
         bytes_received=(bytes_hi << 32) | bytes_lo,
+        slimproto_connected=True,
         connected_at=time.time(),
         last_seen=time.time(),
         name=player_id,
@@ -140,6 +149,9 @@ class SlimProtoService:
                 frame = build_strm_t()
                 writer.write(frame)
                 await writer.drain()
+                self.state.traffic_metrics.record(
+                    remote_address, self.state.config.slimproto_port, "TCP", "TX", "strm", player_id or "unknown"
+                )
                 trace_payload(LOGGER, self.debug_protocol, "TCP TX", peer, "SlimProto strm/t", frame)
 
         try:
@@ -158,6 +170,9 @@ class SlimProtoService:
                     if frame.opcode == "HELO":
                         player = parse_helo(frame.payload, remote_address)
                         player_id = player.player_id
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "HELO", player.player_id
+                        )
                         if not self.state.upsert_player(player):
                             LOGGER.warning("[SECURITY] player limit peer=%s", remote_address)
                             return
@@ -175,20 +190,32 @@ class SlimProtoService:
                         if frame is not None:
                             writer.write(frame)
                             await writer.drain()
+                            self.state.traffic_metrics.record(
+                                remote_address, self.state.config.slimproto_port, "TCP", "TX", "serv", player.player_id
+                            )
                             trace_payload(LOGGER, self.debug_protocol, "TCP TX", peer, "SlimProto serv recovery", frame)
                             LOGGER.info("[SLIM] requested server recovery player=%s", player.player_id)
                         if keepalive_task is None:
                             keepalive_task = asyncio.create_task(keepalive())
                     elif frame.opcode == "STAT" and player_id:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "STAT", player_id
+                        )
                         event = parse_stat_event(frame.payload)
                         self.state.mark_seen(player_id, event)
                         if self.debug_protocol:
                             LOGGER.debug("[TCP 3483] STAT player=%s event=%s", player_id, event or "unknown")
                     elif frame.opcode == "META" and player_id:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "META", player_id
+                        )
                         self.state.mark_seen(player_id, "META")
                         if self.debug_protocol:
                             LOGGER.debug("[TCP 3483] META player=%s", player_id)
                     else:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", frame.opcode, player_id or "unknown"
+                        )
                         if self.state.config.public_catalog_mode:
                             LOGGER.warning("[SLIM] rejected command=%s in public catalog mode", frame.opcode)
                             return

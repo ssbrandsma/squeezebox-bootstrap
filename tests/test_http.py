@@ -25,12 +25,20 @@ class HTTPTests(unittest.IsolatedAsyncioTestCase):
         server = await asyncio.start_server(await create_http_handler(manager), "127.0.0.1", 0)
         port = server.sockets[0].getsockname()[1]
         reader, writer = await asyncio.open_connection("127.0.0.1", port)
-        request = json.dumps([{"channel": "/meta/handshake", "version": "1.0"}]).encode()
-        writer.write(b"POST /cometd HTTP/1.1\r\nHost: test\r\nContent-Type: text/json\r\nContent-Length: " + str(len(request)).encode() + b"\r\n\r\n" + request)
+        request = json.dumps(
+            [{"channel": "/meta/handshake", "version": "1.0", "ext": {"mac": "00:04:20:29:16:7f"}}]
+        ).encode()
+        writer.write(
+            b"POST /cometd HTTP/1.1\r\nHost: test\r\nUser-Agent: SqueezePlay-baby/7.7.3\r\nContent-Type: text/json\r\nContent-Length: "
+            + str(len(request)).encode()
+            + b"\r\n\r\n"
+            + request
+        )
         await writer.drain()
         _, headers, payload = await _read_response(reader)
         self.assertNotIn("connection", headers)
         self.assertTrue(payload[0]["successful"])
+        self.assertEqual(manager.state.players["00:04:20:29:16:7f"].model, "baby")
 
         client_id = payload[0]["clientId"]
         request = json.dumps([{"channel": "/meta/disconnect", "clientId": client_id}]).encode()

@@ -135,8 +135,9 @@ Start with [config.example.json](config.example.json). The server refuses to sta
 - `version`: compatibility version reported to the player.
 - `debug_protocol`: enables bounded protocol payload diagnostics. Keep it `false` outside short troubleshooting sessions.
 - `public_catalog_mode`: enables the restricted anonymous catalog mode described below.
+- `max_metric_entries`, `metrics_retention_seconds`, `metrics_log_interval_seconds`: bound traffic-metric memory, retain inactive rows for one day by default, and write a summary every five minutes.
 
-The remaining numeric values in `config.example.json` bound TCP connections, Comet streams/sessions, player records, subscriptions, pending events, and per-IP request rates. They have conservative defaults; lower them for a small public catalog and only raise them after observing legitimate traffic.
+The remaining numeric values in `config.example.json` bound TCP connections, Comet streams/sessions, player records, subscriptions, pending events, and per-IP request rates. `max_comet_streams_per_ip` defaults to `8` so several Squeezeboxes behind the same NAT can remain connected; lower it only when each source IP represents a single trusted device.
 
 ### Applet Entries
 
@@ -151,12 +152,13 @@ Each item in `applets` is returned by the Jive `jiveapplets` request:
   "url": "https://downloads.example.net/StandaloneRadio-0.3.0.zip",
   "sha": "0123456789abcdef0123456789abcdef01234567",
   "desc": "Standalone internet radio",
+  "changes": "Release notes shown by compatible clients.",
   "creator": "Example",
   "email": ""
 }
 ```
 
-`url` must use `http` or `https`; `sha` must be a 40-character SHA-1 hex value for legacy Jive compatibility. The ZIP file is **not** served by this application. Host it separately on a static HTTPS server and update the URL, version, and SHA-1 together for each release.
+`url` must use `http` or `https`; `sha` must be a 40-character SHA-1 hex value for legacy Jive compatibility. `changes` is optional release-note text. Use `min_target_version` and `max_target_version` when a package applies only to a firmware range. The ZIP file is **not** served by this application. Host it separately on a static HTTPS server and update the URL, version, and SHA-1 together for each release.
 
 Older SqueezeOS/Jive versions may have unreliable DNS behavior when downloading ZIPs. If a numeric-IP URL is known to work for a target device, preserve it exactly.
 
@@ -199,6 +201,16 @@ To upgrade a local build, back up `config.json`, pull the updated source, then r
 The container runs as UID/GID `10001` with a read-only root filesystem, all Linux capabilities dropped, and `no-new-privileges`. It requires no writable directory or `tmpfs`; logs go to the container standard error stream.
 
 `http://SERVER:9000/` is not a user interface and should return `404`. The only HTTP protocol endpoint is `/cometd`.
+
+### Traffic Metrics
+
+The container logs a JSON metrics snapshot at the configured interval. Each row tracks one source IP, listener port, and transport type:
+
+```json
+{"squeezebox_id":"00:04:20:00:00:01","ip_address":"127.0.0.1","port":3483,"type":"TCP","direction":"RX","message_type":"STAT","count":34324,"start_epoch":1700238497,"last_updated_epoch":1700238597}
+```
+
+UDP counts discovery datagrams, TCP `3483` counts SlimProto frames, and TCP `9000` counts CometD messages. `direction` distinguishes received and sent messages; `message_type` identifies protocol work such as `STAT`, `strm`, or `CometD:serverstatus`. The TCP identifier is the Squeezebox MAC address; UDP uses the Jive discovery identifier because discovery packets do not carry a MAC address. `last_updated_epoch` lets consumers calculate the per-device message rate. Rows expire after `metrics_retention_seconds`, and the oldest row is evicted when `max_metric_entries` is reached.
 
 ## Diagnostics And Troubleshooting
 

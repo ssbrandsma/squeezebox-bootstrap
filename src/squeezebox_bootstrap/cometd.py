@@ -9,7 +9,7 @@ import time
 from typing import Any
 
 from .jive import dispatch, datestatus, firmwareupgrade, playerstatus, serverstatus
-from .models import Subscription
+from .models import PlayerState, Subscription
 from .protocol_logging import trace_payload
 from .security import RateLimiter
 from .state import ServerState
@@ -18,6 +18,7 @@ LOGGER = logging.getLogger("squeezebox_bootstrap.cometd")
 PROTOCOL_VERSION = "1.0"
 LONG_POLL_TIMEOUT_MS = 60_000
 _CLIENT_ID_IN_CHANNEL = re.compile(r"/([0-9a-f]{8})/")
+_SUBSCRIBE_INTERVAL = re.compile(r"^subscribe:(\d+)$")
 
 
 def _timestamp() -> str:
@@ -89,6 +90,23 @@ class CometManager:
                 if client_id in self.streams:
                     asyncio.get_running_loop().create_task(self.flush(client_id))
 
+    async def refresh_subscriptions(self) -> None:
+        """Publish only subscriptions whose requested refresh interval has elapsed."""
+        now = time.monotonic()
+        for client_id, session in list(self.state.sessions.items()):
+            events: list[dict[str, Any]] = []
+            for subscription in session.subscriptions.values():
+                if (
+                    subscription.refresh_interval_seconds is None
+                    or subscription.next_refresh_at > now
+                ):
+                    continue
+                events.append(self._subscription_event(subscription))
+                subscription.next_refresh_at = now + subscription.refresh_interval_seconds
+            if events:
+                self.enqueue(client_id, events)
+                await self.flush(client_id)
+
     def enqueue(self, client_id: str, events: list[dict[str, Any]]) -> None:
         session = self.state.get_or_create_session(client_id)
         session.pending_events.extend(events)
@@ -146,6 +164,15 @@ class CometManager:
         session.pending_events.clear()
         if not await stream.send(events):
             await self.detach_stream(client_id, stream.writer)
+            return
+        peer = stream.writer.get_extra_info("peername")
+        peer_ip = peer[0] if isinstance(peer, tuple) else "unknown"
+        for event in events:
+            channel = str(event.get("channel") or "")
+            message_type = channel.split("/slim/", 1)[-1].split("/", 1)[0] or "event"
+            self.state.traffic_metrics.record(
+                peer_ip, self.state.config.http_port, "TCP", "TX", f"CometD:{message_type}", session.player_id
+            )
 
     async def wait_for_events(self, client_id: str, timeout_ms: int) -> list[dict[str, Any]]:
         session = self.state.get_or_create_session(client_id)
@@ -188,6 +215,18 @@ class CometManager:
             )
         return {"channel": subscription.response_channel, "data": data}
 
+    @staticmethod
+    def _subscription_refresh_interval(command: str, args: list[str]) -> int | None:
+        # SqueezePlay asks for some immutable capability snapshots every second.
+        # Only the clock needs a server-driven periodic refresh.
+        if command != "date":
+            return None
+        for arg in args:
+            match = _SUBSCRIBE_INTERVAL.fullmatch(arg)
+            if match:
+                return int(match.group(1))
+        return None
+
     def _request_event(self, response_channel: str, data: dict[str, Any], request_id: Any = None) -> dict[str, Any]:
         event: dict[str, Any] = {"channel": response_channel, "data": data}
         if request_id is not None:
@@ -196,6 +235,41 @@ class CometManager:
 
     def _valid_client(self, client_id: str | None) -> bool:
         return bool(client_id and client_id in self.state.sessions)
+
+    def _register_handshake_player(self, message: dict[str, Any], writer: asyncio.StreamWriter | None) -> str:
+        ext = message.get("ext")
+        if not isinstance(ext, dict):
+            return "unknown"
+        player_id = str(ext.get("mac") or "").lower()
+        if not re.fullmatch(r"[0-9a-f]{2}(?::[0-9a-f]{2}){5}", player_id):
+            return "unknown"
+        peer = writer.get_extra_info("peername") if writer is not None else None
+        remote_address = peer[0] if isinstance(peer, tuple) else "unknown"
+        self.state.upsert_player(
+            PlayerState(
+                player_id=player_id,
+                remote_address=remote_address,
+                model=str(ext.get("model") or "unknown"),
+                firmware=str(ext.get("uuid") or ""),
+                name=player_id,
+            )
+        )
+        return player_id
+
+    def player_id_for_messages(self, messages: list[dict[str, Any]]) -> str:
+        for message in messages:
+            if message.get("channel") == "/meta/handshake":
+                ext = message.get("ext")
+                if isinstance(ext, dict):
+                    player_id = str(ext.get("mac") or "").lower()
+                    if re.fullmatch(r"[0-9a-f]{2}(?::[0-9a-f]{2}){5}", player_id):
+                        return player_id
+            client_id = self._client_id_from_message(message)
+            if client_id and client_id in self.state.sessions:
+                player_id = self.state.sessions[client_id].player_id
+                if player_id != "unknown":
+                    return player_id
+        return "unknown"
 
     @staticmethod
     def _client_id_from_message(message: dict[str, Any]) -> str | None:
@@ -240,8 +314,9 @@ class CometManager:
                         }
                     )
                     continue
+                player_id = self._register_handshake_player(message, writer)
                 client_id = secrets.token_hex(4)
-                self.state.get_or_create_session(client_id)
+                self.state.get_or_create_session(client_id).player_id = player_id
                 responses.append(
                     {
                         "id": message_id or "",
@@ -358,7 +433,19 @@ class CometManager:
                 player_id = request_parts[0] or None
                 command_args = request_parts[1] or []
                 command = str(command_args[0]) if command_args else ""
-                if self.state.config.public_catalog_mode and command != "jiveapplets":
+                # Jive needs these read-only startup and setup probes to
+                # consider the server connected before loading its UI.
+                public_commands = {
+                    "date",
+                    "displaystatus",
+                    "firmwareupgrade",
+                    "jiveapplets",
+                    "menu",
+                    "menustatus",
+                    "serverstatus",
+                    "status",
+                }
+                if self.state.config.public_catalog_mode and command not in public_commands:
                     responses.append(
                         {
                             "id": message_id or "",
@@ -389,11 +476,15 @@ class CometManager:
                         responses[-1].update({"successful": False, "error": "subscription limit reached"})
                         continue
                     subscription_command = command
+                    subscription_args = [str(item) for item in command_args[1:]]
+                    refresh_interval = self._subscription_refresh_interval(subscription_command, subscription_args)
                     session.subscriptions[response_channel] = Subscription(
                         response_channel=response_channel,
                         command=subscription_command,
                         player_id=player_id,
-                        args=[str(item) for item in command_args[1:]],
+                        args=subscription_args,
+                        refresh_interval_seconds=refresh_interval,
+                        next_refresh_at=(time.monotonic() + refresh_interval) if refresh_interval else 0.0,
                     )
 
                 self.enqueue(client_id, [self._request_event(response_channel, result, message_id)])

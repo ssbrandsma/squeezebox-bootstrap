@@ -66,7 +66,7 @@ def load_config(path: str | Path) -> tuple[ServerConfig, list[AppletEntry]]:
         max_tcp_connections=_positive_int(server_raw, "max_tcp_connections", 64),
         max_tcp_connections_per_ip=_positive_int(server_raw, "max_tcp_connections_per_ip", 8),
         max_comet_streams=_positive_int(server_raw, "max_comet_streams", 32),
-        max_comet_streams_per_ip=_positive_int(server_raw, "max_comet_streams_per_ip", 2),
+        max_comet_streams_per_ip=_positive_int(server_raw, "max_comet_streams_per_ip", 8),
         max_comet_sessions=_positive_int(server_raw, "max_comet_sessions", 128),
         max_players=_positive_int(server_raw, "max_players", 64),
         max_subscriptions_per_session=_positive_int(server_raw, "max_subscriptions_per_session", 8),
@@ -75,6 +75,9 @@ def load_config(path: str | Path) -> tuple[ServerConfig, list[AppletEntry]]:
         discovery_requests_per_minute=_positive_int(server_raw, "discovery_requests_per_minute", 30),
         http_requests_per_minute=_positive_int(server_raw, "http_requests_per_minute", 60),
         slimproto_frames_per_minute=_positive_int(server_raw, "slimproto_frames_per_minute", 240),
+        max_metric_entries=_positive_int(server_raw, "max_metric_entries", 4096),
+        metrics_retention_seconds=_positive_int(server_raw, "metrics_retention_seconds", 86400),
+        metrics_log_interval_seconds=_positive_int(server_raw, "metrics_log_interval_seconds", 300),
     )
     if server.advertise_ip:
         try:
@@ -93,6 +96,7 @@ def load_config(path: str | Path) -> tuple[ServerConfig, list[AppletEntry]]:
                 url=str(_require(entry.get("url"), f"applets[{index}].url is required")),
                 sha=str(_require(entry.get("sha"), f"applets[{index}].sha is required")),
                 desc=str(entry.get("desc") or ""),
+                changes=str(entry.get("changes") or ""),
                 creator=str(entry.get("creator") or ""),
                 email=str(entry.get("email") or ""),
                 min_target_version=entry.get("min_target_version"),

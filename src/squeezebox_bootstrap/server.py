@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 
 from .cometd import CometManager
@@ -42,7 +43,7 @@ async def run_server(config_path: str, debug_protocol: bool = False, log_level: 
         finally:
             connection_limiter.release(ip)
 
-    discovery_transport = await start_discovery_server(config, debug_protocol)
+    discovery_transport = await start_discovery_server(config, state.traffic_metrics, debug_protocol)
     http_handler = await create_http_handler(comet_manager, debug_protocol)
     slim_server = await asyncio.start_server(
         lambda reader, writer: limited_handler(slim_service.handle_client, reader, writer),
@@ -58,8 +59,25 @@ async def run_server(config_path: str, debug_protocol: bool = False, log_level: 
         debug_protocol, config.public_catalog_mode,
     )
 
+    async def log_metrics() -> None:
+        while True:
+            await asyncio.sleep(config.metrics_log_interval_seconds)
+            snapshot = state.traffic_metrics.snapshot()
+            if snapshot:
+                logging.getLogger("squeezebox_bootstrap.metrics").info("[METRICS] traffic=%s", json.dumps(snapshot))
+
+    async def refresh_subscriptions() -> None:
+        while True:
+            await asyncio.sleep(1)
+            await comet_manager.refresh_subscriptions()
+
     async with slim_server, http_server:
-        await asyncio.gather(slim_server.serve_forever(), http_server.serve_forever())
+        await asyncio.gather(
+            slim_server.serve_forever(),
+            http_server.serve_forever(),
+            log_metrics(),
+            refresh_subscriptions(),
+        )
 
     discovery_transport.close()
 
