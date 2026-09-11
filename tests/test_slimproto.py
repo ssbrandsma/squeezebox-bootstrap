@@ -26,6 +26,18 @@ class SlimProtoTests(unittest.TestCase):
         self.assertEqual(player.player_id, "00:04:20:01:02:03")
         self.assertEqual(player.revision, 7)
 
+    def test_parse_helo_uses_radio_capabilities(self) -> None:
+        payload = (
+            bytes([12, 7, 0, 4, 32, 1, 2, 3])
+            + bytes.fromhex("0da568e33dbd022615ef9520a3ea5b74")
+            + struct.pack(">HII2s", 0, 0, 0, b"EN")
+            + b"Model=baby,ModelName=Squeezebox Radio,Firmware=7.7.3-r16676"
+        )
+        player = parse_helo(payload, "192.0.2.10")
+        self.assertEqual(player.model, "baby")
+        self.assertEqual(player.model_name, "Squeezebox Radio")
+        self.assertEqual(player.firmware_version, "7.7.3-r16676")
+
     def test_build_server_frame(self) -> None:
         frame = build_server_frame("strm", b"1234")
         self.assertEqual(frame[:2], struct.pack(">H", 8))

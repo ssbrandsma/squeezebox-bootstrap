@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import ipaddress
 import logging
 import struct
 import sys
@@ -87,15 +86,24 @@ def parse_helo(payload: bytes, remote_address: str) -> PlayerState:
         uuid_hex = ""
         wlan_flags, bytes_hi, bytes_lo, language = struct.unpack(">HII2s", payload[8:20])
         capabilities = payload[20:].decode("utf-8", errors="ignore")
+    capability_values = {}
+    for capability in capabilities.split(","):
+        key, separator, value = capability.partition("=")
+        if separator:
+            capability_values[key.lower()] = value
+    model = capability_values.get("model", f"device-{device_id}")
     return PlayerState(
         player_id=player_id,
         remote_address=remote_address,
-        model=f"device-{device_id}",
+        model=model,
+        model_name=capability_values.get("modelname", model),
         firmware=uuid_hex,
+        firmware_version=capability_values.get("firmware", ""),
         revision=revision,
         capabilities=capabilities,
         language=language.decode("ascii", errors="ignore"),
         bytes_received=(bytes_hi << 32) | bytes_lo,
+        slimproto_connected=True,
         connected_at=time.time(),
         last_seen=time.time(),
         name=player_id,
@@ -112,17 +120,7 @@ class SlimProtoService:
     def __init__(self, state: ServerState, debug_protocol: bool = False) -> None:
         self.state = state
         self.debug_protocol = debug_protocol
-        self._recovery_redirect_requested: set[str] = set()
         self.rate_limiter = RateLimiter(state.config.slimproto_frames_per_minute)
-
-    def _build_recovery_redirect(self) -> bytes | None:
-        address = self.state.config.advertise_ip
-        if not address:
-            return None
-        try:
-            return build_server_frame("serv", ipaddress.IPv4Address(address).packed)
-        except ipaddress.AddressValueError:
-            return None
 
     async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         peer = writer.get_extra_info("peername")
@@ -140,6 +138,9 @@ class SlimProtoService:
                 frame = build_strm_t()
                 writer.write(frame)
                 await writer.drain()
+                self.state.traffic_metrics.record(
+                    remote_address, self.state.config.slimproto_port, "TCP", "TX", "strm", player_id or "unknown"
+                )
                 trace_payload(LOGGER, self.debug_protocol, "TCP TX", peer, "SlimProto strm/t", frame)
 
         try:
@@ -158,37 +159,34 @@ class SlimProtoService:
                     if frame.opcode == "HELO":
                         player = parse_helo(frame.payload, remote_address)
                         player_id = player.player_id
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "HELO", player.player_id
+                        )
                         if not self.state.upsert_player(player):
                             LOGGER.warning("[SECURITY] player limit peer=%s", remote_address)
                             return
                         LOGGER.info("[SLIM] HELO player=%s", player.player_id)
-                        if player.player_id not in self._recovery_redirect_requested:
-                            # `serv` tells SqueezePlay to reconnect the player
-                            # socket to this server, refreshing stale state after
-                            # the bootstrap service has restarted.
-                            self._recovery_redirect_requested.add(player.player_id)
-                            if len(self._recovery_redirect_requested) > self.state.config.max_players:
-                                self._recovery_redirect_requested.pop()
-                            frame = self._build_recovery_redirect()
-                        else:
-                            frame = None
-                        if frame is not None:
-                            writer.write(frame)
-                            await writer.drain()
-                            trace_payload(LOGGER, self.debug_protocol, "TCP TX", peer, "SlimProto serv recovery", frame)
-                            LOGGER.info("[SLIM] requested server recovery player=%s", player.player_id)
                         if keepalive_task is None:
                             keepalive_task = asyncio.create_task(keepalive())
                     elif frame.opcode == "STAT" and player_id:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "STAT", player_id
+                        )
                         event = parse_stat_event(frame.payload)
                         self.state.mark_seen(player_id, event)
                         if self.debug_protocol:
                             LOGGER.debug("[TCP 3483] STAT player=%s event=%s", player_id, event or "unknown")
                     elif frame.opcode == "META" and player_id:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", "META", player_id
+                        )
                         self.state.mark_seen(player_id, "META")
                         if self.debug_protocol:
                             LOGGER.debug("[TCP 3483] META player=%s", player_id)
                     else:
+                        self.state.traffic_metrics.record(
+                            remote_address, self.state.config.slimproto_port, "TCP", "RX", frame.opcode, player_id or "unknown"
+                        )
                         if self.state.config.public_catalog_mode:
                             LOGGER.warning("[SLIM] rejected command=%s in public catalog mode", frame.opcode)
                             return

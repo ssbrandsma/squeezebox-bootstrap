@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from squeezebox_bootstrap.discovery import build_discovery_response, parse_discovery_request
+from squeezebox_bootstrap.discovery import build_discovery_response, parse_discovery_request, parse_discovery_values
 from squeezebox_bootstrap.models import ServerConfig
 
 
@@ -13,6 +13,7 @@ class DiscoveryTests(unittest.TestCase):
     def test_parse_request(self) -> None:
         payload = b"eNAME\x00JSON\x00VERS\x00UUID\x00JVID\x06abcdef"
         self.assertEqual(parse_discovery_request(payload)[:4], ["NAME", "JSON", "VERS", "UUID"])
+        self.assertEqual(dict(parse_discovery_values(payload))["JVID"], b"abcdef")
 
     def test_build_response(self) -> None:
         response = build_discovery_response(self.config, ["IPAD", "NAME", "JSON"], "192.0.2.10")

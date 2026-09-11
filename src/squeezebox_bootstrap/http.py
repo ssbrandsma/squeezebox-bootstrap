@@ -1,17 +1,20 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
+import re
 from urllib.parse import parse_qs, unquote_plus, urlparse
 
-from .cometd import CometManager
+from .cometd import CometManager, STREAM_HEARTBEAT_SECONDS
 from .protocol_logging import trace_payload
 
 LOGGER = logging.getLogger("squeezebox_bootstrap.http")
 MAX_HEADER_SIZE = 16 * 1024
 MAX_BODY_SIZE = 128 * 1024
 READ_TIMEOUT = 15
+_SQUEEZEPLAY_MODEL = re.compile(r"SqueezePlay-([^/\s]+)", re.IGNORECASE)
 
 
 class HTTPProtocolError(ValueError):
@@ -84,6 +87,15 @@ def _extract_messages(method: str, target: str, headers: dict[str, str], body: b
     return parsed
 
 
+def _add_handshake_model(messages: list[dict], headers: dict[str, str]) -> None:
+    match = _SQUEEZEPLAY_MODEL.search(headers.get("user-agent", ""))
+    if match is None:
+        return
+    for message in messages:
+        if message.get("channel") == "/meta/handshake" and isinstance(message.get("ext"), dict):
+            message["ext"].setdefault("model", match.group(1).lower())
+
+
 async def _write_json(
     writer: asyncio.StreamWriter, status: str, payload: list[dict], close: bool = True, debug_protocol: bool = False
 ) -> None:
@@ -149,6 +161,17 @@ async def create_http_handler(manager: CometManager, debug_protocol: bool = Fals
                 body = await _read_body(reader, headers)
                 trace_payload(LOGGER, debug_protocol, "TCP RX", peer, "HTTP body", body)
                 messages = _extract_messages(method, target, headers, body)
+                _add_handshake_model(messages, headers)
+                squeezebox_id = manager.player_id_for_messages(messages)
+                for message in messages:
+                    manager.state.traffic_metrics.record(
+                        peer_ip,
+                        manager.state.config.http_port,
+                        "TCP",
+                        "RX",
+                        f"CometD:{message.get('channel') or 'unknown'}",
+                        squeezebox_id,
+                    )
                 if debug_protocol:
                     LOGGER.debug("[TCP 9000] Bayeux channels peer=%s channels=%s", peer, [m.get("channel") for m in messages])
 
@@ -160,11 +183,26 @@ async def create_http_handler(manager: CometManager, debug_protocol: bool = Fals
                 if streaming:
                     await _write_streaming_headers(writer, debug_protocol)
                     await manager.streams[client_id_for_stream].send(responses)  # type: ignore[index]
+                    for response in responses:
+                        manager.state.traffic_metrics.record(
+                            peer_ip,
+                            manager.state.config.http_port,
+                            "TCP",
+                            "TX",
+                            "CometD:response",
+                            squeezebox_id,
+                        )
                     await manager.flush(client_id_for_stream)  # type: ignore[arg-type]
-                    # Bayeux streaming is a server-to-client connection.  The
-                    # Radio sends no more request data while it is healthy, so
-                    # an idle timeout here would incorrectly force a reconnect.
-                    await reader.read()
+                    # SqueezePlay times out a chunked response with no bytes
+                    # after roughly one minute. Send an empty Bayeux batch well
+                    # before that deadline while waiting for the client to close.
+                    while True:
+                        try:
+                            if not await asyncio.wait_for(reader.read(1), timeout=STREAM_HEARTBEAT_SECONDS):
+                                return
+                        except asyncio.TimeoutError:
+                            if not await manager.heartbeat_stream(client_id_for_stream):  # type: ignore[arg-type]
+                                return
                     return
 
                 poll_client_id = None
@@ -178,6 +216,9 @@ async def create_http_handler(manager: CometManager, debug_protocol: bool = Fals
                         responses.extend(pending)
                 # Jive reuses its handshake socket for the streaming request.
                 await _write_json(writer, "200 OK", responses, close=False, debug_protocol=debug_protocol)
+                manager.state.traffic_metrics.record(
+                    peer_ip, manager.state.config.http_port, "TCP", "TX", "HTTP:response", squeezebox_id
+                )
                 served_request = True
         except asyncio.IncompleteReadError:
             if debug_protocol:
@@ -192,7 +233,8 @@ async def create_http_handler(manager: CometManager, debug_protocol: bool = Fals
             if client_id_for_stream:
                 await manager.detach_stream(client_id_for_stream, writer)
             writer.close()
-            await writer.wait_closed()
+            with contextlib.suppress(ConnectionError, OSError):
+                await writer.wait_closed()
             if debug_protocol:
                 LOGGER.debug("[TCP 9000] client disconnected peer=%s", peer)
 

@@ -11,7 +11,7 @@ class JiveAppletTests(unittest.TestCase):
     def setUp(self) -> None:
         config = ServerConfig("Server", "uuid", "127.0.0.1", 9000, 3483, 3483, "7.999.999")
         applets = [
-            AppletEntry("A", "Alpha", "1.0", "baby", "http://1.2.3.4/a.zip", "0" * 40),
+            AppletEntry("A", "Alpha", "1.0", "baby", "http://1.2.3.4/a.zip", "0" * 40, changes="Release notes"),
             AppletEntry("B", "Beta", "1.0", "fab4", "http://1.2.3.4/b.zip", "1" * 40),
         ]
         self.state = ServerState(config, applets)
@@ -20,6 +20,7 @@ class JiveAppletTests(unittest.TestCase):
         result = jiveapplets(self.state, "baby", "7.7.3")
         self.assertEqual(result["count"], 1)
         self.assertEqual(result["item_loop"][0]["name"], "A")
+        self.assertEqual(result["item_loop"][0]["changes"], "Release notes")
 
     def test_empty_result(self) -> None:
         result = jiveapplets(self.state, "controller", "7.7.3")
