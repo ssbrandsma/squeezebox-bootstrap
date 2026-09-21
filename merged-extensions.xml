@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<extensions>
+  <details>
+    <title lang="EN">Squeezebox Applet Repository</title>
+  </details>
+  <applets>
+    <applet name="StandaloneRadio" version="0.7.3" target="baby" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Standalone Radio</title>
+      <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Applet Installer package release 0.7.3.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.7.3.zip</url>
+      <sha>37c727694f0173ac9bf3a62bbf32bb10e3f05dcf</sha>
+    </applet>
+    <applet name="StandaloneRadio" version="0.7.3" target="fab4" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Standalone Radio</title>
+      <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Applet Installer package release 0.7.3.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.7.3.zip</url>
+      <sha>37c727694f0173ac9bf3a62bbf32bb10e3f05dcf</sha>
+    </applet>
+    <applet name="SpotifyConnect" version="0.5.0" target="baby" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Spotify Connect</title>
+      <desc lang="EN">Standalone Spotify Connect playback for Logitech Squeezebox Radio. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Responsive playback controls, remote volume, pairing QR code, and redesigned Now Playing screen.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.5.0.zip</url>
+      <sha>3cfb7debb244514988dce1d2dc1b4c469a886409</sha>
+    </applet>
+    <applet name="SpotifyConnect" version="0.5.0" target="fab4" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Spotify Connect</title>
+      <desc lang="EN">Standalone Spotify Connect playback for Logitech Squeezebox Touch. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Responsive playback controls, remote volume, pairing QR code, and redesigned Now Playing screen.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.5.0.zip</url>
+      <sha>3cfb7debb244514988dce1d2dc1b4c469a886409</sha>
+    </applet>
+    <applet name="DoomDemonstrator" version="0.1.0" target="baby" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Doom Demonstrator</title>
+      <desc lang="EN">Native DOOM Shareware Episode 1 demonstration for Squeezebox Radio. No sound.</desc>
+      <changes lang="EN">Applet Installer package release 0.1.0.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbdoom/DoomDemonstrator-0.1.0.zip</url>
+      <sha>4eab40c9cf3495f479504d3147248f1a26bcc395</sha>
+    </applet>
+  </applets>
+</extensions>
