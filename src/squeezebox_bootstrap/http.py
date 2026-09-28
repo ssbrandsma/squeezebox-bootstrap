@@ -116,6 +116,12 @@ async def _write_json(
     trace_payload(LOGGER, debug_protocol, "TCP TX", writer.get_extra_info("peername"), f"HTTP {status}", body)
 
 
+async def _write_artwork(writer, status: str, body: bytes, debug_protocol: bool = False) -> None:
+    headers = [f"HTTP/1.1 {status}", "Content-Type: image/png" if body.startswith(b"\x89PNG") else "Content-Type: image/jpeg", f"Content-Length: {len(body)}", "Cache-Control: public, max-age=3600", "Connection: close", "", ""]
+    writer.write("\r\n".join(headers).encode("ascii") + body)
+    await writer.drain()
+
+
 async def _write_streaming_headers(writer: asyncio.StreamWriter, debug_protocol: bool = False) -> None:
     headers = [
         "HTTP/1.1 200 OK",
@@ -134,7 +140,7 @@ async def _write_streaming_headers(writer: asyncio.StreamWriter, debug_protocol:
         LOGGER.debug("[TCP TX] HTTP streaming response peer=%s", writer.get_extra_info("peername"))
 
 
-async def create_http_handler(manager: CometManager, debug_protocol: bool = False):
+async def create_http_handler(manager: CometManager, debug_protocol: bool = False, artwork=None):
     async def handle(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         client_id_for_stream: str | None = None
         served_request = False
@@ -152,6 +158,21 @@ async def create_http_handler(manager: CometManager, debug_protocol: bool = Fals
                     return
                 trace_payload(LOGGER, debug_protocol, "TCP RX", peer, f"HTTP headers {method} {target}", raw_headers)
                 parsed_target = urlparse(target)
+                if parsed_target.path == "/artwork":
+                    if method != "GET" or artwork is None:
+                        await _write_json(writer, "404 Not Found", [{"successful": False, "error": "not found"}], debug_protocol=debug_protocol)
+                        return
+                    try:
+                        LOGGER.info("artwork request peer=%s query=%s", peer_ip, parsed_target.query)
+                        image = await artwork.get(parsed_target.query and parse_qs(parsed_target.query).get("type", [""])[0], {k: v[0] for k, v in parse_qs(parsed_target.query).items()}, peer_ip)
+                    except PermissionError:
+                        await _write_json(writer, "429 Too Many Requests", [{"successful": False, "error": "rate limit"}], debug_protocol=debug_protocol)
+                        return
+                    if image is None:
+                        await _write_json(writer, "404 Not Found", [{"successful": False, "error": "artwork not found"}], debug_protocol=debug_protocol)
+                        return
+                    await _write_artwork(writer, "200 OK", image, debug_protocol)
+                    return
                 if parsed_target.path != "/cometd":
                     await _write_json(writer, "404 Not Found", [{"successful": False, "error": "not found"}], debug_protocol=debug_protocol)
                     return

@@ -64,6 +64,11 @@ class ServerConfig:
     max_metric_entries: int = 4096
     metrics_retention_seconds: int = 86400
     metrics_log_interval_seconds: int = 300
+    radio_browser_url: str = "https://all.api.radio-browser.info"
+    artwork_cache_ttl_seconds: int = 86400
+    artwork_cache_max_entries: int = 256
+    artwork_max_bytes: int = 512 * 1024
+    artwork_requests_per_minute: int = 120
 
 
 @dataclass(slots=True)

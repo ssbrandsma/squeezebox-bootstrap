@@ -78,7 +78,13 @@ def load_config(path: str | Path) -> tuple[ServerConfig, list[AppletEntry]]:
         max_metric_entries=_positive_int(server_raw, "max_metric_entries", 4096),
         metrics_retention_seconds=_positive_int(server_raw, "metrics_retention_seconds", 86400),
         metrics_log_interval_seconds=_positive_int(server_raw, "metrics_log_interval_seconds", 300),
+        radio_browser_url=str(server_raw.get("radio_browser_url") or "https://all.api.radio-browser.info"),
+        artwork_cache_ttl_seconds=_positive_int(server_raw, "artwork_cache_ttl_seconds", 86400),
+        artwork_cache_max_entries=_positive_int(server_raw, "artwork_cache_max_entries", 256),
+        artwork_max_bytes=_positive_int(server_raw, "artwork_max_bytes", 512 * 1024),
+        artwork_requests_per_minute=_positive_int(server_raw, "artwork_requests_per_minute", 120),
     )
+    _validate_url(server.radio_browser_url)
     if server.advertise_ip:
         try:
             ipaddress.IPv4Address(server.advertise_ip)

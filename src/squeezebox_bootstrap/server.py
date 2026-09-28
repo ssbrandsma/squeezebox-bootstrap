@@ -12,6 +12,7 @@ from .http import create_http_handler
 from .slimproto import SlimProtoService
 from .state import ServerState
 from .security import ConnectionLimiter
+from .artwork import ArtworkBridge
 
 
 def configure_logging(debug_protocol: bool, log_level: str) -> None:
@@ -30,6 +31,7 @@ async def run_server(config_path: str, debug_protocol: bool = False, log_level: 
     comet_manager = CometManager(state, debug_protocol)
     slim_service = SlimProtoService(state, debug_protocol)
     connection_limiter = ConnectionLimiter(config.max_tcp_connections, config.max_tcp_connections_per_ip)
+    artwork = ArtworkBridge(config, logging.getLogger("squeezebox_bootstrap.artwork"))
 
     async def limited_handler(handler, reader, writer) -> None:
         peer = writer.get_extra_info("peername")
@@ -44,7 +46,7 @@ async def run_server(config_path: str, debug_protocol: bool = False, log_level: 
             connection_limiter.release(ip)
 
     discovery_transport = await start_discovery_server(config, state.traffic_metrics, debug_protocol)
-    http_handler = await create_http_handler(comet_manager, debug_protocol)
+    http_handler = await create_http_handler(comet_manager, debug_protocol, artwork)
     slim_server = await asyncio.start_server(
         lambda reader, writer: limited_handler(slim_service.handle_client, reader, writer),
         config.host,
