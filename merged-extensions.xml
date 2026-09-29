@@ -4,21 +4,21 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.8.1" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.8.2" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix Now Playing logo display and safely restore the Home background.</changes>
+      <changes lang="EN">Add direct RadioFeeds UK &amp; Ireland browsing and playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.1.zip</url>
-      <sha>07da77a9090e5e2f06cbb7d434bf0a9777c007e6</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.2.zip</url>
+      <sha>e104e63326b769a3dfe1a1bfb8612d3d5a547555</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.8.1" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.8.2" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix Now Playing logo display and safely restore the Home background.</changes>
+      <changes lang="EN">Add direct RadioFeeds UK &amp; Ireland browsing and playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.1.zip</url>
-      <sha>07da77a9090e5e2f06cbb7d434bf0a9777c007e6</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.2.zip</url>
+      <sha>e104e63326b769a3dfe1a1bfb8612d3d5a547555</sha>
     </applet>
     <applet name="SpotifyConnect" version="0.5.4" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
