@@ -4,21 +4,21 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.9.0" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.1" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Add transparent HTTPS support through local sbproxy for streams, playlists and artwork.</changes>
+      <changes lang="EN">Fix HTTPS Proxy health detection on stock SqueezePlay.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.0.zip</url>
-      <sha>510d9f9982c9a5a294a457976eff1c53ff5e8cb9</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.1.zip</url>
+      <sha>57f55dee91695b9eb8a19955b87aa806c75753a3</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.0" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.1" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Add transparent HTTPS support through local sbproxy for streams, playlists and artwork.</changes>
+      <changes lang="EN">Fix HTTPS Proxy health detection on stock SqueezePlay.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.0.zip</url>
-      <sha>510d9f9982c9a5a294a457976eff1c53ff5e8cb9</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.1.zip</url>
+      <sha>57f55dee91695b9eb8a19955b87aa806c75753a3</sha>
     </applet>
     <applet name="SpotifyConnect" version="0.5.4" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
