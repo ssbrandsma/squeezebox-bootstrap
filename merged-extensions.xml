@@ -4,21 +4,21 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.8.2" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.0" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Add direct RadioFeeds UK &amp; Ireland browsing and playback.</changes>
+      <changes lang="EN">Add transparent HTTPS support through local sbproxy for streams, playlists and artwork.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.2.zip</url>
-      <sha>e104e63326b769a3dfe1a1bfb8612d3d5a547555</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.0.zip</url>
+      <sha>510d9f9982c9a5a294a457976eff1c53ff5e8cb9</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.8.2" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.0" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Add direct RadioFeeds UK &amp; Ireland browsing and playback.</changes>
+      <changes lang="EN">Add transparent HTTPS support through local sbproxy for streams, playlists and artwork.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.8.2.zip</url>
-      <sha>e104e63326b769a3dfe1a1bfb8612d3d5a547555</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.0.zip</url>
+      <sha>510d9f9982c9a5a294a457976eff1c53ff5e8cb9</sha>
     </applet>
     <applet name="SpotifyConnect" version="0.5.4" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
@@ -43,6 +43,22 @@
       <creator>Sjoerd Brandsma</creator>
       <url>http://49.12.198.91/sbdoom/DoomDemonstrator-0.1.0.zip</url>
       <sha>4eab40c9cf3495f479504d3147248f1a26bcc395</sha>
+    </applet>
+    <applet name="HTTPSProxy" version="0.2.0" target="baby" minTarget="7.7" maxTarget="*">
+      <title lang="EN">HTTPS Proxy</title>
+      <desc lang="EN">Local HTTPS-to-HTTP streaming proxy for Squeezebox Radio applets.</desc>
+      <changes lang="EN">Add StreamTheWorld HTTPS compatibility and updated ARM proxy.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
+      <sha>87696ecf34e91008900e2f8a7d2102e9b513bf83</sha>
+    </applet>
+    <applet name="HTTPSProxy" version="0.2.0" target="fab4" minTarget="7.7" maxTarget="*">
+      <title lang="EN">HTTPS Proxy</title>
+      <desc lang="EN">Local HTTPS-to-HTTP streaming proxy for Squeezebox Touch applets.</desc>
+      <changes lang="EN">Add StreamTheWorld HTTPS compatibility and updated ARM proxy.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
+      <sha>87696ecf34e91008900e2f8a7d2102e9b513bf83</sha>
     </applet>
   </applets>
 </extensions>
