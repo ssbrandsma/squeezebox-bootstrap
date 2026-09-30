@@ -50,7 +50,7 @@
       <changes lang="EN">Add StreamTheWorld HTTPS compatibility and updated ARM proxy.</changes>
       <creator>Sjoerd Brandsma</creator>
       <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
-      <sha>87696ecf34e91008900e2f8a7d2102e9b513bf83</sha>
+      <sha>de83e17804dd53a057e5c1cb04901986eb77759f</sha>
     </applet>
     <applet name="HTTPSProxy" version="0.2.0" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">HTTPS Proxy</title>
@@ -58,7 +58,7 @@
       <changes lang="EN">Add StreamTheWorld HTTPS compatibility and updated ARM proxy.</changes>
       <creator>Sjoerd Brandsma</creator>
       <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
-      <sha>87696ecf34e91008900e2f8a7d2102e9b513bf83</sha>
+      <sha>de83e17804dd53a057e5c1cb04901986eb77759f</sha>
     </applet>
   </applets>
 </extensions>
