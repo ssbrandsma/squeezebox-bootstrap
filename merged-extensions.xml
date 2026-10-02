@@ -60,5 +60,13 @@
       <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
       <sha>de83e17804dd53a057e5c1cb04901986eb77759f</sha>
     </applet>
+    <applet name="StandaloneBase" version="0.2.0" target="baby" minTarget="7.7.3" maxTarget="*">
+      <title lang="EN">Standalone Base</title>
+      <desc lang="EN">Local LMS-compatible infrastructure services for Squeezebox Radio.</desc>
+      <changes lang="EN">Activate the local server, complete Radio bootstrap compatibility, and migrate the former remote bootstrap endpoint to localhost.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbstandalonebase/StandaloneBase-0.2.0.zip</url>
+      <sha>26b82725ef9a9f08f92bec5bdfd1637ceb08660b</sha>
+    </applet>
   </applets>
 </extensions>

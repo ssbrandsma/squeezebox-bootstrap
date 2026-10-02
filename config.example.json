@@ -109,6 +109,19 @@
       "changes": "Add StreamTheWorld HTTPS compatibility and updated ARM proxy.",
       "creator": "Sjoerd Brandsma",
       "email": ""
+    },
+    {
+      "name": "StandaloneBase",
+      "title": "Standalone Base",
+      "version": "0.2.0",
+      "target": "baby",
+      "min_target_version": "7.7.3",
+      "url": "http://49.12.198.91/sbstandalonebase/StandaloneBase-0.2.0.zip",
+      "sha": "26b82725ef9a9f08f92bec5bdfd1637ceb08660b",
+      "desc": "Local LMS-compatible infrastructure services for Squeezebox Radio.",
+      "changes": "Activate the local server, complete Radio bootstrap compatibility, and migrate the former remote bootstrap endpoint to localhost.",
+      "creator": "Sjoerd Brandsma",
+      "email": ""
     }
   ]
 }
