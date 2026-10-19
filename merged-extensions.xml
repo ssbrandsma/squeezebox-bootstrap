@@ -4,21 +4,21 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.9.1" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.8" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix HTTPS Proxy health detection on stock SqueezePlay.</changes>
+      <changes lang="EN">Improve RadioFeeds and HLS playback, metadata and artwork integration; restore playback control when switching LMS servers.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.1.zip</url>
-      <sha>57f55dee91695b9eb8a19955b87aa806c75753a3</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.8.zip</url>
+      <sha>8e3f27cb0eecf4cd5ceadbda96259f4ccf5d04ff</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.1" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.8" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix HTTPS Proxy health detection on stock SqueezePlay.</changes>
+      <changes lang="EN">Improve RadioFeeds and HLS playback, metadata and artwork integration; restore playback control when switching LMS servers.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.1.zip</url>
-      <sha>57f55dee91695b9eb8a19955b87aa806c75753a3</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.8.zip</url>
+      <sha>8e3f27cb0eecf4cd5ceadbda96259f4ccf5d04ff</sha>
     </applet>
     <applet name="SpotifyConnect" version="0.5.4" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
