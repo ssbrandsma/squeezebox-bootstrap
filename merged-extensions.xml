@@ -4,37 +4,37 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.9.8" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.12" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Improve RadioFeeds and HLS playback, metadata and artwork integration; restore playback control when switching LMS servers.</changes>
+      <changes lang="EN">Separate shared OPML transport and parsing from provider-specific behavior; preserve RadioFeeds and TuneIn browsing, playback and presets.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.8.zip</url>
-      <sha>8e3f27cb0eecf4cd5ceadbda96259f4ccf5d04ff</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.12.zip</url>
+      <sha>198f709b5912a8afede06627b384fe2dbd7f849f</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.8" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.12" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Improve RadioFeeds and HLS playback, metadata and artwork integration; restore playback control when switching LMS servers.</changes>
+      <changes lang="EN">Separate shared OPML transport and parsing from provider-specific behavior; preserve RadioFeeds and TuneIn browsing, playback and presets.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.8.zip</url>
-      <sha>8e3f27cb0eecf4cd5ceadbda96259f4ccf5d04ff</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.12.zip</url>
+      <sha>198f709b5912a8afede06627b384fe2dbd7f849f</sha>
     </applet>
-    <applet name="SpotifyConnect" version="0.5.4" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="SpotifyConnect" version="0.6.1" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
       <desc lang="EN">Standalone Spotify Connect playback for Logitech Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix playback across natural track boundaries and rapid Spotify track changes.</changes>
+      <changes lang="EN">Use native Logitech Now Playing and stop Standalone Radio cleanly when Spotify takes over playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.5.4.zip</url>
-      <sha>7ba64e938f67c982e8970a9b04a06615b2a2a5a8</sha>
+      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.6.1.zip</url>
+      <sha>2708bc8d66a08777e8c41dd9008dc2cef109d979</sha>
     </applet>
-    <applet name="SpotifyConnect" version="0.5.4" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="SpotifyConnect" version="0.6.1" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
       <desc lang="EN">Standalone Spotify Connect playback for Logitech Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix playback across natural track boundaries and rapid Spotify track changes.</changes>
+      <changes lang="EN">Use native Logitech Now Playing and stop Standalone Radio cleanly when Spotify takes over playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.5.4.zip</url>
-      <sha>7ba64e938f67c982e8970a9b04a06615b2a2a5a8</sha>
+      <url>http://49.12.198.91/sbspotifyconnect/SpotifyConnect-0.6.1.zip</url>
+      <sha>2708bc8d66a08777e8c41dd9008dc2cef109d979</sha>
     </applet>
     <applet name="DoomDemonstrator" version="0.1.0" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Doom Demonstrator</title>
@@ -60,13 +60,21 @@
       <url>http://49.12.198.91/sbhttpsproxy/HTTPSProxy-0.2.0.zip</url>
       <sha>de83e17804dd53a057e5c1cb04901986eb77759f</sha>
     </applet>
-    <applet name="StandaloneBase" version="0.2.3" target="baby" minTarget="7.7.3" maxTarget="*">
+    <applet name="StandaloneBase" version="0.5.7" target="baby" minTarget="7.7.2" maxTarget="*">
       <title lang="EN">Standalone Base</title>
       <desc lang="EN">Local LMS-compatible infrastructure services for Squeezebox Radio.</desc>
-      <changes lang="EN">Load the Standalone Radio and Standalone Spotify catalog from GitHub with an offline fallback.</changes>
+      <changes lang="EN">Fix Applet Installer install, update and remove paths with Extended Storage; normalize ZIP paths and extract nested artwork safely.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalonebase/StandaloneBase-0.2.3.zip</url>
-      <sha>9830e094c07d0f26b2697ca434e1371b818f4c5c</sha>
+      <url>http://49.12.198.91/sbstandalonebase/StandaloneBase-0.5.7.zip</url>
+      <sha>f83771a90592e256d113dd59bbdfba4defb927bf</sha>
+    </applet>
+    <applet name="QobuzConnect" version="0.1.0" target="baby" minTarget="7.7.3" maxTarget="*">
+      <title lang="EN">Qobuz Connect</title>
+      <desc lang="EN">Qobuz Connect playback for Logitech Squeezebox Radio. Requires StandaloneBase.</desc>
+      <changes lang="EN">Initial package with generation-safe playback, queue synchronization and automatic track advancement.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbqobuzconnect/QobuzConnect-0.1.0.zip</url>
+      <sha>bb1b545abef8cfd7bc7528256d48db2c84ba6c6c</sha>
     </applet>
   </applets>
 </extensions>
