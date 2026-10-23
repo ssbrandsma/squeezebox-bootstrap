@@ -4,22 +4,6 @@
     <title lang="EN">Squeezebox Applet Repository</title>
   </details>
   <applets>
-    <applet name="StandaloneRadio" version="0.9.12" target="baby" minTarget="7.7" maxTarget="*">
-      <title lang="EN">Standalone Radio</title>
-      <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Separate shared OPML transport and parsing from provider-specific behavior; preserve RadioFeeds and TuneIn browsing, playback and presets.</changes>
-      <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.12.zip</url>
-      <sha>198f709b5912a8afede06627b384fe2dbd7f849f</sha>
-    </applet>
-    <applet name="StandaloneRadio" version="0.9.12" target="fab4" minTarget="7.7" maxTarget="*">
-      <title lang="EN">Standalone Radio</title>
-      <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Separate shared OPML transport and parsing from provider-specific behavior; preserve RadioFeeds and TuneIn browsing, playback and presets.</changes>
-      <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.12.zip</url>
-      <sha>198f709b5912a8afede06627b384fe2dbd7f849f</sha>
-    </applet>
     <applet name="SpotifyConnect" version="0.6.1" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Spotify Connect</title>
       <desc lang="EN">Standalone Spotify Connect playback for Logitech Squeezebox Radio. LMS is only needed to install the applet.</desc>
@@ -75,6 +59,22 @@
       <creator>Sjoerd Brandsma</creator>
       <url>http://49.12.198.91/sbqobuzconnect/QobuzConnect-0.1.0.zip</url>
       <sha>bb1b545abef8cfd7bc7528256d48db2c84ba6c6c</sha>
+    </applet>
+    <applet name="StandaloneRadio" version="0.9.13" target="baby" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Standalone Radio</title>
+      <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Add custom OPML directories and fix HTTP-to-HTTPS playlist redirects with bounded request cleanup and HLS playback.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.13.zip</url>
+      <sha>d293a06fe201046001cd391d065c4f7f2ca7eedf</sha>
+    </applet>
+    <applet name="StandaloneRadio" version="0.9.13" target="fab4" minTarget="7.7" maxTarget="*">
+      <title lang="EN">Standalone Radio</title>
+      <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
+      <changes lang="EN">Add custom OPML directories and fix HTTP-to-HTTPS playlist redirects with bounded request cleanup and HLS playback.</changes>
+      <creator>Sjoerd Brandsma</creator>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.13.zip</url>
+      <sha>d293a06fe201046001cd391d065c4f7f2ca7eedf</sha>
     </applet>
   </applets>
 </extensions>
