@@ -60,21 +60,21 @@
       <url>http://49.12.198.91/sbqobuzconnect/QobuzConnect-0.1.0.zip</url>
       <sha>bb1b545abef8cfd7bc7528256d48db2c84ba6c6c</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.13" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.14" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
       <changes lang="EN">Add custom OPML directories and fix HTTP-to-HTTPS playlist redirects with bounded request cleanup and HLS playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.13.zip</url>
-      <sha>d293a06fe201046001cd391d065c4f7f2ca7eedf</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.14.zip</url>
+      <sha>743c649015758ed6e8d3ac0a823bca2b7d6e9916</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.13" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.14" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
       <changes lang="EN">Add custom OPML directories and fix HTTP-to-HTTPS playlist redirects with bounded request cleanup and HLS playback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.13.zip</url>
-      <sha>d293a06fe201046001cd391d065c4f7f2ca7eedf</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.14.zip</url>
+      <sha>743c649015758ed6e8d3ac0a823bca2b7d6e9916</sha>
     </applet>
   </applets>
 </extensions>
