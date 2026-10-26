@@ -60,21 +60,21 @@
       <url>http://49.12.198.91/sbqobuzconnect/QobuzConnect-0.1.0.zip</url>
       <sha>bb1b545abef8cfd7bc7528256d48db2c84ba6c6c</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.17" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.18" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix custom stations on native UBIFS and add exact-name TuneIn station-logo fallback with bounded caching.</changes>
+      <changes lang="EN">Include managed LMS handoff and local playback-owner fixes alongside native UBIFS stations and exact-name logo fallback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.17.zip</url>
-      <sha>5905476cba373ba7f5f19cb5543e475f12d375cd</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.18.zip</url>
+      <sha>cc13a8e7c298cc9a4a32b34524d5c74d232b345e</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.17" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.18" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch. LMS is only needed to install the applet.</desc>
-      <changes lang="EN">Fix custom stations on native UBIFS and add exact-name TuneIn station-logo fallback with bounded caching.</changes>
+      <changes lang="EN">Include managed LMS handoff and local playback-owner fixes alongside native UBIFS stations and exact-name logo fallback.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.17.zip</url>
-      <sha>5905476cba373ba7f5f19cb5543e475f12d375cd</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.18.zip</url>
+      <sha>cc13a8e7c298cc9a4a32b34524d5c74d232b345e</sha>
     </applet>
   </applets>
 </extensions>
