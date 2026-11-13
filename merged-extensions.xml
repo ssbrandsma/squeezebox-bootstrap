@@ -68,21 +68,21 @@
       <url>http://49.12.198.91/sbstandalonebase/StandaloneBase-0.7.0-fab4.zip</url>
       <sha>94d40186bb3cba27a7155e0c404f039aa34338ee</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.18" target="baby" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.20" target="baby" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Radio.</desc>
-      <changes lang="EN">Managed LMS handoff and local playback-owner fixes, with user stations and exact-name logo fallback.</changes>
+      <changes lang="EN">Fix standby and explicit Play resume, respect other sources controls, remember the last station, and prevent local Base synchronization reconnect loops.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.18.zip</url>
-      <sha>cc13a8e7c298cc9a4a32b34524d5c74d232b345e</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.20.zip</url>
+      <sha>2b139f6e14ba032aa9b9e47f9f4c1b038d9b4d0c</sha>
     </applet>
-    <applet name="StandaloneRadio" version="0.9.18" target="fab4" minTarget="7.7" maxTarget="*">
+    <applet name="StandaloneRadio" version="0.9.20" target="fab4" minTarget="7.7" maxTarget="*">
       <title lang="EN">Standalone Radio</title>
       <desc lang="EN">Standalone internet radio playback for Squeezebox Touch.</desc>
-      <changes lang="EN">Managed LMS handoff and local playback-owner fixes, with user stations and exact-name logo fallback.</changes>
+      <changes lang="EN">Fix standby and explicit Play resume, respect other sources controls, remember the last station, and prevent local Base synchronization reconnect loops.</changes>
       <creator>Sjoerd Brandsma</creator>
-      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.18.zip</url>
-      <sha>cc13a8e7c298cc9a4a32b34524d5c74d232b345e</sha>
+      <url>http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.20.zip</url>
+      <sha>2b139f6e14ba032aa9b9e47f9f4c1b038d9b4d0c</sha>
     </applet>
   </applets>
 </extensions>
