@@ -111,6 +111,19 @@
       "email": ""
     },
     {
+      "name": "StandaloneRadio",
+      "title": "Standalone Radio",
+      "version": "0.9.20",
+      "target": "rg35xxh",
+      "min_target_version": "7.7",
+      "url": "http://49.12.198.91/sbstandalone/StandaloneRadio-0.9.20.zip",
+      "sha": "2b139f6e14ba032aa9b9e47f9f4c1b038d9b4d0c",
+      "desc": "Standalone internet radio playback for RG35XX H.",
+      "changes": "Fix standby and explicit Play resume, respect other sources controls, remember the last station, and prevent local Base synchronization reconnect loops.",
+      "creator": "Sjoerd Brandsma",
+      "email": ""
+    },
+    {
       "name": "HTTPSProxy",
       "title": "HTTPS Proxy",
       "version": "0.2.0",
